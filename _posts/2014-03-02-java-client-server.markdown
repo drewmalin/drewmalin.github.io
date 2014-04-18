@@ -46,7 +46,7 @@ Getting started with a simple ant script:
 
 A couple of notes about the various build options above. The *includeantruntime* option, if true,  will include all libraries specific and available to Ant in the build's classpath. This is unnecessary for this project. Setting *fork* to true will allow the project to run in a fresh VM, rather than being invoked from within the VM in which ant resides.
 
-Additionally, this particular ant setup expects a file structure where the ant script sits at the same level as two independed directories, bin and src. Compilation of the \*.java files within the src directory will be outputted into the \*.bin directory.
+Additionally, this particular ant setup expects a file structure where the ant script sits at the same level as two independent directories, bin and src. Compilation of the \*.java files within the src directory will be outputted into the \*.bin directory.
 
 Writing the server.
 
@@ -441,7 +441,7 @@ This will emulate separate server and client systems. In addition to this, we mi
 </project>
 {% endhighlight %}
 
-Nothing too fancy here, just a splitting of the build process between client and server. Note that 'build-all' is now the default commant, meaning by simply running 'ant' within the terminal, both the client and the server will be built. Running 'ant server' or 'ant client' will start up the server and client respectively (perform these commands within their own terminal windows).
+Nothing too fancy here, just a splitting of the build process between client and server. Note that 'build-all' is now the default command, meaning by simply running 'ant' within the terminal, both the client and the server will be built. Running 'ant server' or 'ant client' will start up the server and client respectively (perform these commands within their own terminal windows).
 
 And now, the client!
 
