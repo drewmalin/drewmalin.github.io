@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "[Bash] Incorporating Git into the Command Line"
-date: 2014-04-17 20:00:00
+date: 2014-04-18 20:00:00
 category: development
 ---
 
