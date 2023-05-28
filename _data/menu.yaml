@@ -8,8 +8,6 @@ entries:
 
   - title: Notes by Project
     entries:
-      - title: hello-jpackage
-        url: archive_category_c.html
       - title: Lispy Python
         url: archive_project_lispy_python.html
 
