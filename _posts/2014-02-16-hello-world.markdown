@@ -2,12 +2,13 @@
 layout: post
 title:  "Hello, world!"
 date: 2014-02-17 18:03:30
-category: development
+categories: [java]
+permalink: :year-:month-:day-:title
 ---
 
 Obligatory "Hello, world!" on this shiny new development blog.
 
-{% highlight java %}
+```java
 /**
  * Look at this fancy markdown
  */
@@ -16,4 +17,4 @@ public class Main {
         System.out.println("Hello, world!");
     }
 }
-{% endhighlight %}
+```

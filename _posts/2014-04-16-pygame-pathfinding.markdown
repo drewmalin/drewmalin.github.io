@@ -1,8 +1,9 @@
 ---
 layout: post
-title: "[Python] Pygame + Pathfinding"
+title: "Pygame + Pathfinding"
 date: 2014-04-16 12:00:00
-category: development
+categories: [python]
+permalink: :year-:month-:day-:title
 ---
 
 I swear I actually work on my side projects...
@@ -16,7 +17,7 @@ So, instead of charging full steam ahead on getting some sort of gameplay into t
 
 This class forms the entry point for a request for a path. This implementation of A\* will be fairly simple. Instead of keeping track of references to node objects, Python will allow us to maintain our global "map" as a series of tuples representing x and y positions. These immutable lists of values will furthermore be able to be used as keys into dictionaries, allowing for fast lookups should particular nodes require additional data.
 
-{% highlight python %} 
+```python
 import math
 
 class PathManager:
@@ -50,7 +51,7 @@ class PathManager:
     def generate_path(self, from_node, to_node):
         pass
 
-{% endhighlight %}
+```
 
 The constructor for a PathManager takes as input the width and height of the world, and an optional list of 'obstacle' nodes. These nodes will be considered to be impassable by the A\* algorithm.
 
@@ -67,7 +68,7 @@ Also notice that suspiciously empty *generate\_path* method... we'll get back to
 As mentioned, our 'map' is really just a collection of *(x, y)* coordinates that will be used as dictionary keys. Furthermore, in the actual persistence of a map, we only really care about points that are actually of interest to the A\* algorithm. In our case, the set of 'obstacle' nodes is really all we need. This allows us to maintain a very lightweight map. Once we dive into the search algorithm itself, we will be constantly checking for possible steps to take from any given
 context node. We can move the burden of this calculation to the map itself:
 
-{% highlight python %}
+```python
 class PathMap:
     def __init__(self, w, h):
         self.w = w
@@ -91,7 +92,7 @@ class PathMap:
                 else:
                     neighbor_nodes.append(neighbor_node)
         return neighbor_nodes
-{% endhighlight %}
+```
 
 The *get\_neighbor\_nodes* method will take as input a node (coordinate tuple), and an optional step value, and will return an array of all possible nodes that are valid for consideration. Note that currently this makes no checks against the size of the world.
 
@@ -99,7 +100,7 @@ The *get\_neighbor\_nodes* method will take as input a node (coordinate tuple), 
 
 Now that we've got a storage mechanism squared away, we need a class to help out with the actual determination of the shortest path. I've omitted from the code below a number of getter and setter methods for brevity, but hopefully the core of the class remains:
 
-{% highlight python %}
+```python
 class Path:
     def __init__(self):
         self.open_set = set()
@@ -128,7 +129,7 @@ class Path:
             dx = int(from_node[0] - to_node[0])
             dy = int(from_node[1] - to_node[1])
             return (dx ** 2 + dy ** 2) <= 100
-{% endhighlight %}
+```
 
 The Path object will take care not only of keeping track of *g* and *f* values for the nodes themselves (values which are used to determine the appropriate steps to take in a path) but also the 'parent' nodes of each step. Once a node is determined to be close enough to the destination location (via *close\_enough*) it is used as the starting point for the construct method, which reverses this chain of nodes until the starting node is retrieved, returning the final path as an array of
 coordinates.
@@ -139,7 +140,7 @@ Note that our search algorithm will constantly be looking for the 'first node in
 
 With the framework ready to go, it's time to revisit the *generate\_path* method in the PathManager class:
 
-{% highlight python linenos %}
+```python
     def generate_path(self, from_node, to_node):
         path = Path()
         path.add_open_set(from_node)
@@ -164,7 +165,7 @@ With the framework ready to go, it's time to revisit the *generate\_path* method
                     path.set_f(neighbor_node, path.get_g(neighbor_node) + \
                                PathManager.dist_heuristic(neighbor_node, to_node))
         return path.construct(from_node)
-{% endhighlight %}
+```
 
 The implemented code follows the wikipedia algorithm fairly closely. The two parameters, *from\_node* and *to\_node*, are just *(x, y)* tuple coordinates, just as the other classes expect. As an initial step, the *g* value (the calculated cost of traveling from the *start\_node* to this node) of the *start\_node* is set to 0. This node is then added to the *open\_set* (the set of nodes to be considered as part of the shortest path to the *to\_node*).
 
@@ -177,6 +178,6 @@ each neighbor node is given a new *g* value and an associated *f* value (the est
 
 I added a bit of code to draw the obstacles themselves, in addition to highlighting some of the decision making the A\* algorithm is doing. The green line is the calculated shortest path. Green dots were steps that were considered to be possibly involved in the shortest path, and red dots are steps that were considered to definitely not be part of the shortest path.
 
-![Pathfinding Dude]({{ site.url }}/assets/pathfinding.gif)
+![Pathfinding Dude]({{ site.url }}/assets/2014-04-16-pygame-pathfinding/pathfinding.gif)
 
 [Full project](https://github.com/drewmalin/pygame_pathfinding)

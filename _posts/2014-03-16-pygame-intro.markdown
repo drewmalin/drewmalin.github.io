@@ -1,8 +1,9 @@
 ---
 layout: post
-title: "[Python] Game Development with Pygame and Pyganim"
+title: "Game Development with Pygame and Pyganim"
 date: 2014-03-16 21:00:00
-category: development
+categories: [python]
+permalink: :year-:month-:day-:title
 ---
 
 Another weekend, another project!
@@ -13,27 +14,27 @@ I read an article recently about [Pyganim](http://inventwithpython.com/pyganim/)
 
 The [downloads](http://pygame.org/download.shtml) section of the Pygame website includes instructions for installing the library on various operating systems. Although the installation instructions are well documented, several attempts to follow them on my Mac went nowhere. In the end I was finally able to install Pygame using homebrew:
 
-{% highlight text %}
+```
 brew install pygame
 brew install sdl sdl_image sdl_mixer sdl_ttf portmidi
-{% endhighlight %}
+```
 
 ### Step 2: Grab Pyganim
 
 The 'installation' of pyganim is as simple as putting pyganim.py (located [here](http://inventwithpython.com/pyganim/index.html#download)) in the appropriate location. Here is what my filestructure looks like for this project:
 
-{% highlight text %}
+```
 |- .
 |- main.py
 |- pyganim.py
 |- resources/
-{% endhighlight %}
+```
 
 ### Step 3: Hello, world!
 
 With everything set to start coding, here's a basic snippet to hit the ground running:
 
-{% highlight python %}
+```python
 import pygame, sys
 from pygame.locals import *
 
@@ -51,21 +52,21 @@ while True:
     windowSurface.fill((0, 0, 0))
     pygame.draw.circle(windowSurface, BLUE, (width/2, height/2), 20, 0)
     pygame.display.flip()
-{% endhighlight %}
+```
 
 Boom! A blue circle in a sea of blackness!
 
 With that, we now need a task... a direction... Seeing as one of the most basic things a player would expect from a game is to be able to move the main character around, let's make a main character! I present to you, the aptly named, Dude:
 
-![Idle Dude]({{ site.url }}/assets/dudestill.gif)
+![Idle Dude]({{ site.url }}/assets/2014-03-16-pygame-intro/dudestill.gif)
 
 I will spare you the several hours my very-much-non-artistic-brain spent hammering away at making this little guy mobile. Behold, Dude has been given life:
 
-![Run Forward Dude]({{ site.url }}/assets/duderunfront.gif) ![Run Back Dude]({{ site.url }}/assets/duderunback.gif) ![Run Right Dude]({{ site.url }}/assets/duderunright.gif) ![Run Left Dude]({{ site.url }}/assets/duderunleft.gif)
+![Run Forward Dude]({{ site.url }}/assets/2014-03-16-pygame-intro/duderunfront.gif) ![Run Back Dude]({{ site.url }}/assets/2014-03-16-pygame-intro/duderunback.gif) ![Run Right Dude]({{ site.url }}/assets/2014-03-16-pygame-intro/duderunright.gif) ![Run Left Dude]({{ site.url }}/assets/2014-03-16-pygame-intro/duderunleft.gif)
 
 Now it's time to throw these frames into pyganim to see what it can do:
 
-{% highlight python %}
+```python
 import pygame, sys
 import pyganim
 import math
@@ -159,10 +160,10 @@ while True:
 
  	# Swap the buffers
 	pygame.display.flip()
-{% endhighlight %}
+```
 
 And the result?
 
-![Dude Play]({{ site.url }}/assets/dudeplay.gif)
+![Dude Play]({{ site.url }}/assets/2014-03-16-pygame-intro/dudeplay.gif)
 
 [Full project](https://github.com/drewmalin/pygame_and_pyganim)
