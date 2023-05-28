@@ -1,8 +1,9 @@
 ---
 layout: post
-title: "[Java] Client/Server"
+title: "Java Client/Server"
 date: 2014-03-02 22:01:00
-category: development
+categories: [java]
+permalink: :year-:month-:day-:title
 ---
 
 Weekend projects are great not only as a change of pace, a stress reliever, or even a way of learning new things, but as a way of remembering those little skills that have begun to slip away. The targeted skills for this weekend? The general, *multithreaded networking*, and the specific, *ant scripts*.
@@ -11,7 +12,7 @@ It begins.
 
 Getting started with a simple ant script:
 
-{% highlight xml %}
+```java
 <project name="ClientServer" default="build" basedir=".">
     <property name="src"    location="src"/>
     <property name="build"  location="bin"/>
@@ -42,7 +43,7 @@ Getting started with a simple ant script:
         </java>
     </target>
 </project>
-{% endhighlight %}
+```
 
 A couple of notes about the various build options above. The *includeantruntime* option, if true,  will include all libraries specific and available to Ant in the build's classpath. This is unnecessary for this project. Setting *fork* to true will allow the project to run in a fresh VM, rather than being invoked from within the VM in which ant resides.
 
@@ -53,7 +54,7 @@ Writing the server.
 
 First, stubbing out some methods:
 
-{% highlight java %}
+```java
 public class Server extends Thread {
     public Server() {
     
@@ -96,11 +97,11 @@ public class Server extends Thread {
         final Server server = new Server();
     }
 }
-{% endhighlight %}
+```
 
 The above is not quite complete without something to handle each individual connection to a client. This is where ClientThread comes into play:
 
-{% highlight java %}
+```java
 public class ClientThread extends Thread {
     public ClientThread(final Socket socket, final int id, final Server serverHandle) {
 
@@ -137,11 +138,11 @@ public class ClientThread extends Thread {
 
     }
 }
-{% endhighlight %}
+```
 
 And now for some implementation! First, the Server:
 
-{% highlight java %}
+```java
     private static final int SERVER_PORT = 1337;
     private ServerSocket serverSocket;
     private final Map<Integer, ClientThread> clientThreads;
@@ -157,14 +158,14 @@ And now for some implementation! First, the Server:
             System.exit(1);
         }
     }
-{% endhighlight %}
+```
 
 The constructor will handle the initialization of the data structure housing the client threads, the server socket through which clients will connect, and some basic error handling. A Map is used here so that some control can be had over the ID which uniquely identifies each client (allowing the server to pinpoint client activity). An array would work, but rearranging clients after they disconnect goes beyond the point of this project. The server port here was chosen fairly arbitrarily.
 The error handling is extremely basic, but if there is an issue with the server socket, there isn't much point continuing the program execution.
 
 Now, we have the server up and running! What happens when a client attempts a connection?
 
-{% highlight java %}
+```java
     @Override
     public void run() {
         while (true) {
@@ -185,14 +186,14 @@ Now, we have the server up and running! What happens when a client attempts a co
             }
         }
     }
-{% endhighlight %}
+```
 
 The combination of the infinite loop and the line *this.serverSocket.accept()* means our server will churn away, continuously accepting and validating client connections. The thread will actually block at the *accept()* call (hence the implementation of Thread in the first place) moving forward only if a connection is attempted. Once the client socket is discovered, the handshaking routine will need to pass before the server will save the client's information. However, if all goes
 horribly wrong and an error occurs, there's no reason to kill the server. In this case, we just allow the server to ignore the client who failed to connect.
 
 We've got a server up, and now it's listening for connections. Let's quickly wrap up the server code:
 
-{% highlight java %}
+```java
     // If the context client is null, broadcast the packet to all clients.
     // Make sure not to transmit a packet back to the client which originated it.
     public void transmitPacket(final Packet packet, final ClientThread ctxClient) {
@@ -217,13 +218,13 @@ We've got a server up, and now it's listening for connections. Let's quickly wra
             tmpId = Server.idGenerator.nextInt();
         }
     }
-{% endhighlight %}
+```
 
 Our server can now happily churn away, connecting, disconnecting, and messaging clients. But how does the outside world actually interact with the server?
 
 Via ClientThread objects. We begin again with the constructor:
 
-{% highlight java %}
+```java
     private final Socket socket;
     private final Server serverHandle; // a hook back to the server
     private final int id;
@@ -244,11 +245,11 @@ Via ClientThread objects. We begin again with the constructor:
             e.printStackTrace();
         }
     }
-{% endhighlight %}
+```
 
 This constructor is reminiscent of that in the Server class, with the exception of the input/output streams which are our literal bridges across the network to the remote clients.
 
-{% highlight java %}
+```java
     @Override
     public void run() {
         while (true) {
@@ -262,14 +263,14 @@ This constructor is reminiscent of that in the Server class, with the exception 
             }
         }
     }
-{% endhighlight %}
+```
 
 More familiar code! This while loop will allow for this thread to continuously wait for and act upon client input. the *readObject()* call will halt the thread until data is received, at which point the raw object is cast to a Packet (which will be outlined soon) and sent up to the server for transmission to the other clients. Failure here means the connection to the client has been severed in some way. If this happens, we first notify the server that this client should be
 removed, then we break from the infinite loop, allowing this thread to die.
 
 What about when this client thread needs to send information to its remote client? Never fear: 
 
-{% highlight java %}
+```java
     public void sendPacket(final Packet p) {
         try {
             this.oos.writeObject(p);
@@ -279,11 +280,11 @@ What about when this client thread needs to send information to its remote clien
             e.printStackTrace();
         }
     }
-{% endhighlight %}
+```
 
 All of this will be for naught, however, if the sever is not able to identify this client as being valid for connection. Our handshaking routine will be a simple one: a mere exchange of "Hello's," but this could be improved to be a bit more robust at a later time:
 
-{% highlight java %}
+```java
     // Returns true if handshaking succeeds, false otherwise.
     public boolean handshake() {
         System.out.println("Attempted connection: " + this.socket.getInetAddress());
@@ -303,11 +304,11 @@ All of this will be for naught, however, if the sever is not able to identify th
         System.out.println("Connection accepted.");
         return true;
     }
-{% endhighlight %}
+```
 
 We can wrap this up by supplying the *close()* and *getClientId()* methods used by the server:
 
-{% highlight java %}
+```java
     public void close() {
         try {
             this.socket.close();
@@ -322,11 +323,11 @@ We can wrap this up by supplying the *close()* and *getClientId()* methods used 
     public int getClientId() {
         return this.id;
     }
-{% endhighlight %}
+```
 
 Server: written. The bulk is complete. But before moving onto the client code, first we should establish what exactly this Packet object is all about.
 
-{% highlight java %}
+```java
 public class Packet implements Serializable {
 
     // The serialVersionUID is needed by the Serializable interface-- this ensures
@@ -360,13 +361,13 @@ public class Packet implements Serializable {
         return this.data;
     }
 }
-{% endhighlight %}
+```
 
 Of note: the Packet class will be used by both the Client and Server objects. Due to the use of Serializable objects being sent between object streams, the *exact* same class needs to be present on both systems. For us, all this means is one copy of Packet.java will reside with the server in its own directory, and one with the client.
 
 This marks a perfect time to segue into the need for a slightly updated directory structure! Something like this will do:
 
-{% highlight text %}
+```
 |- .
 |- build.xml
 |- client/
@@ -375,11 +376,11 @@ This marks a perfect time to segue into the need for a slightly updated director
 |- server/
    |- src/
    |- bin/
-{% endhighlight %}
+```
 
 This will emulate separate server and client systems. In addition to this, we might as well update the ant script (build.xml) to accommodate this change:
 
-{% highlight xml %}
+```xml
 <project name="ClientServer" default="build-all" basedir=".">
 	<property name="server_src" 	location="server/src"/>
 	<property name="server_build" 	location="server/bin"/>
@@ -439,13 +440,13 @@ This will emulate separate server and client systems. In addition to this, we mi
     </target>
 
 </project>
-{% endhighlight %}
+```
 
 Nothing too fancy here, just a splitting of the build process between client and server. Note that 'build-all' is now the default command, meaning by simply running 'ant' within the terminal, both the client and the server will be built. Running 'ant server' or 'ant client' will start up the server and client respectively (perform these commands within their own terminal windows).
 
 And now, the client!
 
-{% highlight java %}
+```java
 public class Client extends Thread {
     public Client() {
 
@@ -484,11 +485,11 @@ public class Client extends Thread {
 
     }
 }
-{% endhighlight %}
+```
 
 Again, some familiar-looking code. The gist here is that, once the handshaking routine is complete, all that the client needs to do is behave as a conduit for i/o from the server and other clients.  Speaking of i/o...
 
-{% highlight java %}
+```java
     private Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
@@ -522,13 +523,13 @@ Again, some familiar-looking code. The gist here is that, once the handshaking r
             System.exit(1);
         }
     }
-{% endhighlight  %}
+```
 
 Handshaking complete! Lots of error catching that results in the client coming down. This is done mainly because, well, there's not much to do if the server is unable to be reached. If this model were to be inserted into a greater project, this could be replaced with a 'retry connection' method.
 
 And now a couple infinite loops. The first will handle reading in input from the server (and therefore from the other clients), the second will handle reading in user input, transmitting it to the server so the other clients will be able to read it.
 
-{% highlight java %}
+```java
     @Override
     public void run() {
         while (true) {
@@ -555,13 +556,13 @@ And now a couple infinite loops. The first will handle reading in input from the
             }
         }
     }
-{% endhighlight %}
+```
 
 Pretty self-explanatory given the server code already written. *run()* will continuously print out information from the server, while *handleUserInput()* will continuously transmit back to the server any console input from the user. Text provied to standard in is a bit contrived, but one can imagine this being expanded (by simply enhancing the *Packet* class) for other more interesting information.
 
 Finally, the main routine to actually run the client (and a little helper go grab the timestamp of the packet creation)!
 
-{% highlight java %}
+```java
     public String getTimestamp() {
         return new java.text.SimpleDateFormat("MM/dd/yyyy h:mm:ss a").format(new Date());
     }
@@ -570,11 +571,11 @@ Finally, the main routine to actually run the client (and a little helper go gra
         final Client client = new Client();
         client.connect("localhost", 1337);
     }
-{% endhighlight %}
+```
 
 When all is said and done, we should be able to see the following in three separate terminals (representing three separate systems):
 
-{% highlight text %}
+```
 $ ant server
 Buildfile: /Users/drewmalin/Desktop/ClientServerJava/build.xml
 
@@ -588,9 +589,9 @@ server:
      [java] Handshaking...
      [java] Connection accepted from: /127.0.0.1
      [java] SERVER - Awaiting connections. 2 clients connected.
-{% endhighlight %}
+```
 
-{% highlight text %}
+```
 $ ant client
 Buildfile: /Users/drewmalin/Desktop/ClientServerJava/build.xml
 
@@ -600,9 +601,9 @@ client:
      [java] Handshaking...
      [java] Success!
 Hello, world!
-{% endhighlight %}
+```
 
-{% highlight text %}
+```
 ant client
 Buildfile: /Users/drewmalin/Desktop/ClientServerJava/build.xml
 
@@ -612,7 +613,7 @@ client:
      [java] Handshaking...
      [java] Success!
      [java] MSG (2124925754) [03/03/2014 9:30:21 PM]: Hello, world!
-{% endhighlight %}
+```
 
 World domination is well within reach.
 

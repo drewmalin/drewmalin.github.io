@@ -1,0 +1,33 @@
+entries:
+  - title: About me
+    entries:
+      - title: Drew Malin
+        url: about
+      - title: Github
+        url: https://github.com/drewmalin
+
+  - title: Notes by Project
+    entries:
+      - title: hello-jpackage
+        url: archive_category_c.html
+      - title: Lispy Python
+        url: archive_project_lispy_python.html
+
+  - title: Notes by Language
+    entries:
+      - title: C/C++
+        url: archive_category_c.html
+      - title: Java
+        url: archive_category_java.html
+      - title: Go
+        url: archive_category_go.html
+      - title: Python
+        url: archive_category_python.html
+
+  - title: Notes by Time
+    post_list:
+      limit: 5
+      show_more: true
+      show_more_url: archive.html
+      show_more_text: All...
+    
