@@ -5,6 +5,8 @@ entries:
         url: about
       - title: Github
         url: https://github.com/drewmalin
+      - title: Reading List
+        url: reading-list
 
   - title: Notes by Project
     entries:
